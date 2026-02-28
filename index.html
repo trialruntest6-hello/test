@@ -1,1 +1,102 @@
-<a href="https://www.google.com">www.google.com</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Particles</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  overflow:hidden;
+  background:#321;
+}
+
+canvas{
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="space"></canvas>
+
+<script>
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let particles = [];
+const COUNT = 1000;
+
+function createParticles(){
+  particles = [];
+  for(let i=0;i<COUNT;i++){
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1 + 0.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      a: Math.random()
+    });
+  }
+}
+createParticles();
+
+function drawNebula(){
+  const g = ctx.createRadialGradient(
+    canvas.width/2,
+    canvas.height/2,
+    0,
+    canvas.width/2,
+    canvas.height/2,
+    canvas.width * 0.7
+  );
+  g.addColorStop(0,"rgba(120,140,255,0.25)");
+  g.addColorStop(1,"rgba(0,0,30,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawNebula();
+
+  particles.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if(p.x < 0) p.x = canvas.width;
+    if(p.x > canvas.width) p.x = 0;
+    if(p.y < 0) p.y = canvas.height;
+    if(p.y > canvas.height) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,"+p.a+")";
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
